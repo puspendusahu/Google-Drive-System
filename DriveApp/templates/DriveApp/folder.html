@@ -1,0 +1,283 @@
+{% extends 'DriveApp/base.html' %} {% load static %} {% block body %}
+
+  <div class="row">
+    <!-- Button trigger modal -->
+    <div class="col-8"></div>
+    <div class="col-2 text-end">
+      <button
+        type="button"
+        class="btn btn-outline-secondary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModalFile"
+        style="width: 150px"
+      >
+        Upload File
+      </button>
+    </div>
+    <!-- Button trigger modal -->
+    <div class="col-2">
+      <button
+        type="button"
+        class="btn btn-outline-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Add Folder
+      </button>
+    </div>
+  </div>
+
+
+<div style="display: flex; justify-content: space-between; padding: 5px 10px">
+  <input type="hidden" id="hdnMainFolderId" value="{{folderid}}" />
+
+  <div class="row">
+    <div class="container py-3">
+      <div class="row">
+        <!--  -->
+        {% for i in files %}
+        <div class="col-4 mt-2 cardFile">
+          <div class="card">
+            <div class="card-body" style="background-color: #9da371">
+              <h5 class="card-title">{{i.fileTitle}}</h5>
+
+              <a
+                href="{{i.file.url}}"
+                download="{{i.file}}"
+                class="btn btn-outline-primary"
+                >Download File
+              </a>
+
+              <input
+                type="button"
+                data-fileid="{{i.id}}"
+                class="btn btn-outline-danger deleteFile"
+                value="Delete File"
+              />
+
+              <input
+                type="button"
+                data-fileid="{{i.id}}"
+                class="btn btn-outline-success editFile"
+                value="Edit File"
+              />
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <!--  -->
+      </div>
+    </div>
+<hr/>
+    <div class="container py-3">
+      <div class="row">
+        <!--  -->
+        {% for i in childFolder %}
+        <div class="col-4 mt-2 CardFolder">
+          <div class="card">
+            <div class="card-body" style="background-color: #ffd765">
+              <h5 class="card-title">{{i.folderName}}</h5>
+              <p class="card-text">{{i.folderDesc}}</p>
+
+              <a href="{% url 'folder' i.id %}" class="btn btn-outline-primary"
+                >Go Folder
+              </a>
+
+              <input
+                type="button"
+                data-folderid="{{i.id}}"
+                class="btn btn-outline-danger deleteRootfolder"
+                value="Delete Folder"
+              />
+
+              <input
+                type="button"
+                data-folderid="{{i.id}}"
+                data-parentfolderid="{{i.parentFolderId}}"
+                class="btn btn-outline-success editRootfolder"
+                value="Edit Folder"
+              />
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <!--  -->
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Upload file -->
+    <div class="col">
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModalFile"
+        tabindex="-1"
+        aria-labelledby="exampleModalFileLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalFileLabel">
+                Upload File
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+
+            <div class="modal-body">
+              <form
+                action="{% url 'folder' folderid %}"
+                method="POST"
+                enctype="multipart/form-data"
+              >
+                {% csrf_token %}
+                <div class="mb-3">
+                  <label for="exampleFormControlInput1" class="form-label"
+                    >File Name</label
+                  >
+                  <input
+                    type="file"
+                    class="form-control"
+                    id="exampleFormControlInput1"
+                    name="file"
+                    required
+                  />
+                  <label for="exampleFormControlInput1" class="form-label"
+                    >File Title</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="exampleFormControlInput1"
+                    name="filetitle"
+                    required
+                  />
+                  <button class="btn btn-outline-success my-3">
+                    Upload File
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Upload file -->
+
+    <!-- Add Folder -->
+    <div class="col">
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add Folder</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form action="">
+                {% csrf_token %}
+                <div class="mb-3">
+                  <input
+                    type="hidden"
+                    id="hdnAddFolder"
+                    data-parentfolderid="{{folderid}}"
+                  />
+                  <label for="folderNameId" class="form-label"
+                    >Folder Name</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="folderNameId"
+                    name="foldername"
+                  />
+                  <label for="folderDescId" class="form-label"
+                    >Folder Desc</label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="folderDescId"
+                    name="desc"
+                  />
+                  <input
+                    type="button"
+                    class="btn btn-success mt-5"
+                    value="Save"
+                    id="btnAddFolder"
+                  />
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Folder End -->
+
+  <!-- Edit File Modal -->
+  <div class="modal fade" id="modalEditFile" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalFLabel">Edit File</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="col-11 pe-2 pt-3 mx-3">
+          <form id="frmNew">
+            <input type="hidden" data-folderid="" id="hdnFileId" />
+            <div class="mb-3">
+              <label class="form-label">File Name</label>
+              <input
+                type="text"
+                id="fileName"
+                class="form-control"
+                maxlength="50"
+                placeholder="File Name"
+              />
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="fileBtnSubmit" class="btn btn-secondary">
+            Submit
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock body %} {% block jsFile %}
+<script
+  type="text/javascript"
+  src="{% static 'DriveApp/js/FolderApp.js' %}"
+></script>
+{% endblock jsFile %}
