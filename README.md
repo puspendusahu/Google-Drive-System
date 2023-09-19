@@ -12,5 +12,5 @@ python manage.py runserver
 
 # Super Admin 
 # --------------
-# username- Admin
-# password- Admin
+# username- admin
+# password- admin
